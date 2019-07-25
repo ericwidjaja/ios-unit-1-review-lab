@@ -38,7 +38,20 @@ establishment of an absolute Tyranny over these States. To prove this, let Facts
 candid world.
 """
 ```
+```swift
+var strToArray = [String]()
+var newArray = declarationOfIndependence.components(separatedBy: .punctuationCharacters).joined().components(separatedBy: "\n")
+//print(newArray)
 
+for a in newArray {
+    for b in a.components(separatedBy: " ") {
+        strToArray.append(b)
+    }
+}
+//print(newArray)
+
+//still not finish yet
+```
 ## Question 2
 
 Make an array that contains all elements that appear more than twice in someRepeatsAgain.
@@ -46,6 +59,20 @@ Make an array that contains all elements that appear more than twice in someRepe
 
 ```swift
 var someRepeatsAgain = [25,11,30,31,50,28,4,37,13,20,24,38,28,14,44,33,7,43,39,35,36,42,1,40,7,14,23,46,21,39,11,42,12,38,41,48,20,23,29,24,50,41,38,23,11,30,50,13,13,16,10,8,3,43,10,20,28,39,24,36,21,13,40,25,37,39,31,4,46,20,38,2,7,11,11,41,45,9,49,31,38,23,41,16,49,29,14,6,6,11,5,39,13,17,43,1,1,15,25]
+
+var numArray = [Int]()
+for a in someRepeatsAgain {
+    var count = Int()
+    for b in someRepeatsAgain {
+        if b == a {
+            count += 1
+        }
+    }
+    if count > 2 && !numArray.contains(a) {
+        numArray.append(a)
+    }
+}
+print("Elements that appear more than twice = \(numArray.sorted())")
 ```
 
 ## Question 3
@@ -53,7 +80,21 @@ var someRepeatsAgain = [25,11,30,31,50,28,4,37,13,20,24,38,28,14,44,33,7,43,39,3
 Identify if there are 3 integers in the following array that sum to 10. If so, print them. If there are multiple triplets, print all possible triplets.
 
 ```swift
+
 var tripleSumArr = [-20,-14, -8,-5,-3,-2,1,2,3,4,9,15,20,30]
+
+var triplets: [[Int]] = []
+
+for a in tripleSumArr {
+    for b in tripleSumArr {
+        for c in tripleSumArr {
+            if a + b + c == 10 && !triplets.contains([a,b,c].sorted()) {
+                triplets.append([a,b,c].sorted())
+            }
+        }
+    }
+}
+print(triplets)
 ```
 
 
@@ -145,12 +186,50 @@ class Giant {
         self.homePlanet = homePlanet
     }
 }
-
 let fred = Giant(name: "Fred", weight: 340.0, homePlanet: "Earth")
-
 fred.name = "Brick"
 fred.weight = 999.2
 fred.homePlanet = "Mars"
+```
+```swift
+the fred.homePlanet will not work because the property was initialized as a constant (let homePlanet: String = "Earth")
+
+To fix this, we need to change it to a 'var' type.
+class Giant {
+var name: String = "Fred"
+var weight: Double = 340.0
+var homePlanet: String = "Earth"
+}
+
+let fred = Giant()
+fred.name = "Brick"
+fred.weight = 999.2
+fred.homePlanet = "Mars"
+
+print(fred.name) //Brick
+print(fred.weight) // 999.2
+print(fred.homePlanet) //Mars
+```
+```swift
+//the fred.homePlanet will not work because the property was initialized as a constant (let homePlanet: String = "Earth")
+
+//To fix this, we need to change it to a 'var' type.
+
+class Giant {
+    var name: String = "Fred"
+    var weight: Double = 340.0
+    var homePlanet: String = "Earth"
+}
+
+let fred = Giant()
+fred.name = "Brick"
+fred.weight = 999.2
+fred.homePlanet = "Mars"
+
+print(fred.name) //Brick
+print(fred.weight) // 999.2
+print(fred.homePlanet) //Mars
+
 ```
 
 b. Using the Giant class. What will the value of `edgar.name` be after the code below runs? How about `jason.name`? Explain why.
@@ -159,8 +238,22 @@ b. Using the Giant class. What will the value of `edgar.name` be after the code 
 let edgar = Giant(name: "Edgar", weight: 520.0, homePlanet: "Earth")
 let jason = edgar
 jason.name = "Jason"
-```
 
+let edgar = Giant(name: "Edgar", weight: 520.0, homePlanet: "Earth")
+let jason = edgar
+jason.name = "Jason"
+
+print("The value of edgar.name is \(edgar.name)") // The value of edgar.name is edgar
+
+//and
+
+print("The value of jason.name is \(jason.name)") // The value of jason.name is Jason
+
+
+//Why?
+//the Class had originally a constant with a value of'edgar', when jason is equal to edgar, the value in 'jason.name' is replaced from 'edgar' to 'Jason'. Class has reference type, so changing it will update its latest value.
+
+```
 ## Question 7
 
 ```
@@ -177,8 +270,24 @@ struct BankAccount {
     }
 }
 ```
-
 a. Explain why the code above doesn't compile, then fix it.
+
+```swift
+//"the above codes do not work because in the properties of value types cannot be modified within its instance methods in Structures. The only way to modify these values, we have to use mutating in the instance method.
+
+struct BankAccount {
+    var owner: String
+    var balance: Double
+
+    mutating func deposit(_ amount: Double) {
+    balance += amount
+    }
+
+    mutating func withdraw(_ amount: Double) {
+    balance -= amount
+    }
+}
+```
 
 b. Add a property called `deposits` of type `[Double]` that stores all of the deposits made to the bank account
 
@@ -187,7 +296,41 @@ c. Add a property called `withdraws` of type `[Double]` that stores all of the w
 d. Add a property called `startingBalance`.  Have this property be set to the original balance, and don't allow anyone to change it
 
 e. Add a method called `totalGrowth` that returns a double representing the change in the balance from the starting balance to the current balance
+```swift
+struct BankAccount {
+    var owner: String
+    let startingBalance: Double
+    var deposits: Double
+    var withdrawls: Double
+    var balance: Double
 
+
+    func totalGrowth() -> Double {
+    return balance - startingBalance
+    }
+
+    mutating func deposit(_ amount: Double) {
+    balance += amount
+    deposits += amount
+    }
+
+    mutating func withdraw(_ amount: Double) {
+    balance -= amount
+    deposits -= amount
+    }
+}
+
+
+var myAccount = BankAccount(owner: "eRic", startingBalance: 1500, deposits: 0.0, withdrawls: 0.0, balance: 500)
+
+print(myAccount.totalGrowth())
+
+myAccount.deposit(1500)
+myAccount.withdraw(200)
+
+print(myAccount.balance)
+print(myAccount.totalGrowth())
+```
 ## Question 8
 
 ```swift
